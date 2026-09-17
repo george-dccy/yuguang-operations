@@ -1,0 +1,12 @@
+# Browser runtime configuration
+
+browser:
+  engine: browser-use
+  profile_path: ""
+
+# Use an existing Chrome profile to preserve login sessions.
+# Never store cookies or credentials in this repository.
+
+execution:
+  save_draft_only: true
+  allow_final_publish: false
