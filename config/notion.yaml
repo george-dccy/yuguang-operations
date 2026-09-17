@@ -1,0 +1,16 @@
+# Notion configuration
+
+# Fill with your actual Notion integration settings
+notion:
+  database_id:
+    content_tasks: ""
+
+# Database: 07｜内容任务与发布包库
+#
+# Required fields:
+# Status
+# Human Approval Status
+# Automation Status
+# Content Images
+# Platform Copy
+# Publish Instruction
