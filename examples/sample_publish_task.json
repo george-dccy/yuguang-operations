@@ -1,0 +1,9 @@
+{
+  "task_id": "demo-task",
+  "platform": "xiaohongshu",
+  "images": ["notion-content-image-1"],
+  "title": "一个普通夜晚",
+  "body": "记录一个生活片段。",
+  "tags": ["生活记录", "AI影像"],
+  "publish_instruction": "create draft only"
+}
