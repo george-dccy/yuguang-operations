@@ -2,7 +2,7 @@
 Browser-use execution adapter for Hermes.
 
 Responsibilities:
-- Receive a normalized PublishTask.
+- Receive normalized PublishTask.
 - Select platform adapter instructions.
 - Invoke browser-use runtime.
 - Return structured execution result.
@@ -25,16 +25,17 @@ class BrowserExecutionResult:
 class BrowserRunner:
     """Runtime wrapper around browser-use.
 
-    The actual browser-use Agent initialization should be injected by the
-    Hermes environment because credentials, browser profile and model
-    settings belong to deployment configuration.
+    Browser profile, cookies, model configuration and credentials are injected
+    by the Hermes deployment environment.
     """
 
-    def __init__(self, browser_agent=None):
+    def __init__(self, browser_agent=None, adapter_registry=None):
         self.browser_agent = browser_agent
+        self.adapter_registry = adapter_registry or {}
 
     def run(self, publish_task: Dict[str, Any]) -> BrowserExecutionResult:
         platform = publish_task.get("platform", "unknown")
+        adapter = self.adapter_registry.get(platform)
 
         if self.browser_agent is None:
             return BrowserExecutionResult(
@@ -43,14 +44,23 @@ class BrowserRunner:
                 message="browser-use runtime is not configured"
             )
 
-        # Future implementation:
-        # 1. load platform adapter browser-flow
-        # 2. create browser-use task
-        # 3. execute draft creation
-        # 4. return result
+        if adapter is None:
+            return BrowserExecutionResult(
+                status="adapter_missing",
+                platform=platform,
+                message="no platform adapter configured"
+            )
+
+        task = {
+            "platform": platform,
+            "flow": adapter.get("browser_flow"),
+            "payload": publish_task,
+        }
+
+        result = self.browser_agent.run(task)
 
         return BrowserExecutionResult(
-            status="completed",
+            status=result.get("status", "unknown"),
             platform=platform,
-            message="browser task executed"
+            message=result.get("message", "")
         )
