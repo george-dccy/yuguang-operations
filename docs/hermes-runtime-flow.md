@@ -2,37 +2,40 @@
 
 ## Overview
 
-Hermes is the operation orchestrator.
+Hermes is the Yu Guang operation orchestrator.
 
-It does not create content decisions. It executes approved workflows.
+Users normally interact through natural conversation. Hermes should infer and invoke the matching `yg-*` skills; explicit skill names are optional.
 
 ## Scheduled Trigger
 
-Example:
+Example, every hour:
 
-Every hour:
-
-1. Query Notion 07 content database.
-2. Find tasks where:
-
-- Automation Status = 待执行
-
-3. Build PublishTask.
-4. Send to Publish Orchestrator.
+1. `yg-content-operation-scheduler` checks Notion 07.
+2. `yg-notion-content-operation` identifies eligible tasks.
+3. `yg-publish-orchestrator` validates and routes each task.
+4. One platform publisher executes:
+   - `yg-xiaohongshu-publisher`
+   - `yg-douyin-publisher`
+   - `yg-wechat-mp-publisher`
+5. browser-use creates the platform draft.
+6. execution result is written back to Notion.
 
 ## Execution Chain
 
 ```
-Hermes Scheduler
+Hermes scheduler / natural-language request
         |
         v
-Notion Content Operation
+yg-content-operation-scheduler (when scheduled)
         |
         v
-Publish Orchestrator
+yg-notion-content-operation
         |
         v
-Platform Adapter
+yg-publish-orchestrator
+        |
+        v
+yg-*-publisher
         |
         v
 browser-use
@@ -43,22 +46,19 @@ Platform Draft
 
 ## After Execution
 
-Update Notion:
-
 Success:
 
 - Automation Status = 已完成
 - Publishing Record updated
+- Status remains unchanged unless public publication actually occurred
 
 Failure:
 
 - Automation Status = 执行失败
-- Error recorded
+- error recorded
 
 ## Safety
 
-Default:
+Default: create draft only.
 
-Create draft only.
-
-Human remains final publisher.
+Human remains the final public-publishing gate.
